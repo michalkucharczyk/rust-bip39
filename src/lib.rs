@@ -258,9 +258,9 @@ impl Mnemonic {
 	/// Example:
 	///
 	/// ```
-	/// use bip39::{Mnemonic, Language};
+	/// use parity_bip39::{Mnemonic, Language};
 	///
-	/// let mut rng = bip39::rand::thread_rng();
+	/// let mut rng = parity_bip39::rand::thread_rng();
 	/// let m = Mnemonic::generate_in_with(&mut rng, Language::English, 24).unwrap();
 	/// ```
 	#[cfg(feature = "rand_core")]
@@ -288,7 +288,7 @@ impl Mnemonic {
 	/// Example:
 	///
 	/// ```
-	/// use bip39::{Mnemonic, Language};
+	/// use parity_bip39::{Mnemonic, Language};
 	///
 	/// let m = Mnemonic::generate_in(Language::English, 24).unwrap();
 	/// ```
@@ -303,7 +303,7 @@ impl Mnemonic {
 	/// Example:
 	///
 	/// ```
-	/// use bip39::Mnemonic;
+	/// use parity_bip39::Mnemonic;
 	///
 	/// let m = Mnemonic::generate(24).unwrap();
 	/// ```
@@ -324,7 +324,7 @@ impl Mnemonic {
 	/// Basic usage:
 	///
 	/// ```
-	/// use bip39::Mnemonic;
+	/// use parity_bip39::Mnemonic;
 	///
 	/// let mnemonic = Mnemonic::from_entropy(&[0; 32]).unwrap();
 	/// for (i, word) in mnemonic.words().enumerate() {
@@ -349,7 +349,7 @@ impl Mnemonic {
 	/// Basic usage:
 	///
 	/// ```
-	/// use bip39::{Language, Mnemonic};
+	/// use parity_bip39::{Language, Mnemonic};
 	///
 	/// let list = Language::English.word_list();
 	/// let mnemonic = Mnemonic::from_entropy(&[0; 32]).unwrap();
@@ -620,7 +620,7 @@ impl Mnemonic {
 	/// following assertion should hold:
 	///
 	/// ```rust
-	/// # use bip39::Mnemonic;
+	/// # use parity_bip39::Mnemonic;
 	/// # use bitcoin_hashes::{Hash, sha256, hex::FromHex};
 	/// # let ent = Vec::from_hex("98FE3D0FF6E955A484B0A1D0C9CE10F6").unwrap();
 	/// # let m = Mnemonic::from_entropy(&ent).unwrap();

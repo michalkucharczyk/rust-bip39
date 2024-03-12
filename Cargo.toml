@@ -1,10 +1,10 @@
 [package]
-name = "bip39"
-version = "2.0.0"
+name = "parity-bip39"
+version = "2.0.1"
 authors = ["Steven Roose <steven@stevenroose.org>"]
 license = "CC0-1.0"
-homepage = "https://github.com/rust-bitcoin/rust-bip39/"
-repository = "https://github.com/rust-bitcoin/rust-bip39/"
+homepage = "https://github.com/michalkucharczyk/rust-bip39"
+repository = "https://github.com/michalkucharczyk/rust-bip39"
 documentation = "https://docs.rs/bip39/"
 description = "Library for BIP-39 Bitcoin mnemonic codes"
 keywords = [ "crypto", "bitcoin", "bip39", "mnemonic" ]
@@ -54,7 +54,7 @@ unicode-normalization = { version = "=0.1.22", default-features = false, optiona
 
 [dev-dependencies]
 # Enabling the "rand" feature by default to run the benches
-bip39 = { path = ".", features = ["rand"] }
+parity-bip39 = { path = ".", features = ["rand"] }
 bitcoin_hashes = ">=0.12,<0.14" # enable default features for test
 
 
