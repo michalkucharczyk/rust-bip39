@@ -29,20 +29,23 @@
 #[cfg(any(test, feature = "std"))]
 pub extern crate core;
 
+#[cfg(feature = "alloc")]
 extern crate alloc;
 
 extern crate bitcoin_hashes;
 
-#[cfg(feature = "std")]
+#[cfg(feature = "unicode-normalization")]
 extern crate unicode_normalization;
 
-#[cfg(feature = "rand_core")]
-pub extern crate rand_core;
 #[cfg(feature = "rand")]
 pub extern crate crate_rand as rand;
+#[cfg(feature = "rand_core")]
+pub extern crate rand_core;
 #[cfg(feature = "serde")]
 pub extern crate serde;
 
+#[cfg(feature = "alloc")]
+use alloc::{borrow::Cow, string::ToString, vec::Vec};
 use core::{fmt, str};
 
 /// We support a wide range of dependency versions for `rand` and `rand_core` and not
@@ -53,13 +56,11 @@ use rand::{CryptoRng, RngCore};
 use rand_core::{CryptoRng, RngCore};
 
 #[cfg(feature = "std")]
-use std::borrow::Cow;
-#[cfg(feature = "std")]
 use std::error;
 
 use bitcoin_hashes::{sha256, Hash};
 
-#[cfg(feature = "std")]
+#[cfg(feature = "unicode-normalization")]
 use unicode_normalization::UnicodeNormalization;
 
 #[cfg(feature = "zeroize")]
@@ -102,7 +103,7 @@ impl AmbiguousLanguages {
 	}
 
 	/// Returns a vector of the possible languages.
-	#[cfg(feature = "std")]
+	#[cfg(feature = "alloc")]
 	pub fn to_vec(&self) -> Vec<Language> {
 		self.iter().collect()
 	}
@@ -190,7 +191,7 @@ impl Mnemonic {
 	/// Performing this on a [Cow] means that all allocations for normalization
 	/// can be avoided for languages without special UTF8 characters.
 	#[inline]
-	#[cfg(feature = "std")]
+	#[cfg(feature = "unicode-normalization")]
 	pub fn normalize_utf8_cow<'a>(cow: &mut Cow<'a, str>) {
 		let is_nfkd = unicode_normalization::is_nfkd_quick(cow.as_ref().chars());
 		if is_nfkd != unicode_normalization::IsNormalized::Yes {
@@ -513,7 +514,7 @@ impl Mnemonic {
 	}
 
 	/// Parse a mnemonic in the given language.
-	#[cfg(feature = "std")]
+	#[cfg(feature = "unicode-normalization")]
 	pub fn parse_in<'a, S: Into<Cow<'a, str>>>(
 		language: Language,
 		s: S,
@@ -524,7 +525,7 @@ impl Mnemonic {
 	}
 
 	/// Parse a mnemonic and detect the language from the enabled languages.
-	#[cfg(feature = "std")]
+	#[cfg(feature = "unicode-normalization")]
 	pub fn parse<'a, S: Into<Cow<'a, str>>>(s: S) -> Result<Mnemonic, Error> {
 		let mut cow = s.into();
 		Mnemonic::normalize_utf8_cow(&mut cow);
@@ -549,17 +550,12 @@ impl Mnemonic {
 		const PBKDF2_BYTES: usize = 64;
 
 		let mut seed = [0u8; PBKDF2_BYTES];
-		pbkdf2::pbkdf2(
-			self.words(),
-			normalized_passphrase.as_bytes(),
-			PBKDF2_ROUNDS,
-			&mut seed,
-		);
+		pbkdf2::pbkdf2(self.words(), normalized_passphrase.as_bytes(), PBKDF2_ROUNDS, &mut seed);
 		seed
 	}
 
 	/// Convert to seed bytes.
-	#[cfg(feature = "std")]
+	#[cfg(feature = "unicode-normalization")]
 	pub fn to_seed<'a, P: Into<Cow<'a, str>>>(&self, passphrase: P) -> [u8; 64] {
 		let normalized_passphrase = {
 			let mut cow = passphrase.into();
@@ -608,7 +604,7 @@ impl Mnemonic {
 	}
 
 	/// Convert the mnemonic back to the entropy used to generate it.
-	#[cfg(feature = "std")]
+	#[cfg(feature = "alloc")]
 	pub fn to_entropy(&self) -> Vec<u8> {
 		let (arr, len) = self.to_entropy_array();
 		arr[0..len].to_vec()
@@ -660,11 +656,11 @@ impl str::FromStr for Mnemonic {
 	type Err = Error;
 
 	fn from_str(s: &str) -> Result<Mnemonic, Error> {
-		#[cfg(feature = "std")]
+		#[cfg(feature = "unicode-normalization")]
 		{
 			Mnemonic::parse(s)
 		}
-		#[cfg(not(feature = "std"))]
+		#[cfg(not(feature = "unicode-normalization"))]
 		{
 			Mnemonic::parse_normalized(s)
 		}
@@ -883,7 +879,7 @@ mod tests {
 				mnemonic_str
 			);
 
-			#[cfg(feature = "std")]
+			#[cfg(feature = "unicode-normalization")]
 			{
 				assert_eq!(&mnemonic.to_string(), mnemonic_str, "failed vector: {}", mnemonic_str);
 				assert_eq!(
